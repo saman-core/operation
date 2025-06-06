@@ -1,0 +1,57 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: APP_NAME-job
+spec:
+  template:
+    spec:
+      containers:
+        - image: CONTAINER_JOB_IMAGE
+          envFrom:
+            - configMapRef:
+                name: APP_NAME-deploy-secret
+          imagePullPolicy: IfNotPresent
+          name: APP_NAME-job
+          volumeMounts:
+            - name: json-secret
+              mountPath: /deployments/json
+              readOnly: true
+      restartPolicy: Never
+      volumes:
+        - name: json-secret
+          secret:
+            secretName: APP_NAME-json-secret
+---
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: APP_NAME
+spec:
+  template:
+    spec:
+      containers:
+        - image: CONTAINER_IMAGE
+          envFrom:
+            - configMapRef:
+                name: APP_NAME-deploy-secret
+          imagePullPolicy: IfNotPresent
+          name: APP_NAME
+          ports:
+            - containerPort: 8080
+              name: http1
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /work/certs
+              name: certs
+              readOnly: true
+            - mountPath: /work/json
+              name: json-secret
+              readOnly: true
+      volumes:
+        - name: certs
+          secret:
+            secretName: certs
+        - name: json-secret
+          secret:
+            secretName: APP_NAME-json-secret
