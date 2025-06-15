@@ -1,7 +1,10 @@
 package io.samancore.operation.repository;
 
-import io.samancore.operation.entity.ContractEntity;
+import io.samancore.common.model.PageData;
+import io.samancore.common.page.PageRequest;
 import io.samancore.operation.entity.OperationEntity;
+import io.samancore.operation.model.OperationStatus;
+import io.samancore.operation.request.OperationFilterRequest;
 import io.smallrye.mutiny.Uni;
 
 import java.util.Date;
@@ -10,11 +13,9 @@ import java.util.List;
 public interface OperationRepository {
     Uni<OperationEntity> getById(Long id);
 
-    Uni<List<OperationEntity>> getByContractId(long contractId);
-
-    Uni<List<OperationEntity>> getByContractIdAndRangeDate(long contractId, Date startDate, Date endDate);
-
-    Uni<List<OperationEntity>> getByContractIdAndRangeDate(long contractId, Date date);
+    Uni<PageData<OperationEntity>> getByContractIdAndStatus(long contractId, OperationStatus status);
 
     Uni<List<OperationEntity>> getByRangeDate(Date startDate, Date endDate);
+
+    Uni<PageData<OperationEntity>> getByFilters(OperationFilterRequest request, PageRequest pageRequest);
 }

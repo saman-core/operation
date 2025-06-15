@@ -6,9 +6,11 @@ import io.samancore.common.transformer.GenericTransformer;
 import io.samancore.operation.entity.OutsourceEntity;
 import io.samancore.operation.entity.ReferenceEntity;
 import io.samancore.operation.entity.ReferenceEntity;
+import io.samancore.operation.entity.StructureEntity;
 import io.samancore.operation.model.Outsource;
 import io.samancore.operation.model.Reference;
 import io.samancore.operation.model.Reference;
+import io.samancore.operation.model.Structure;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.apache.commons.lang3.tuple.Pair;
@@ -26,12 +28,16 @@ public class ReferenceTransformer extends GenericTransformer<ReferenceEntity, Re
     @Inject
     OutsourceTransformer outsourceTransformer;
 
+    @Inject
+    StructureTransformer structureTransformer;
+
 
     public ReferenceEntity toEntity(Reference model) {
         try {
             log.debugf("ReferenceTransformer.toEntity model: %s", model);
-            var pair = Pair.of("outsource", (Function<Outsource, ?>) outsourceTransformer::toEntity);
-            return transformToEntity(model, pair);
+            var pairOutsource = Pair.of("outsource", (Function<Outsource, ?>) outsourceTransformer::toEntity);
+            var pairStructure = Pair.of("structure", (Function<Structure, ?>) structureTransformer::toEntity);
+            return transformToEntity(model, pairOutsource, pairStructure);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.TRANSFORMER_OBJECT_ERROR, e);
@@ -41,8 +47,9 @@ public class ReferenceTransformer extends GenericTransformer<ReferenceEntity, Re
     public List<ReferenceEntity> toEntityList(List<Reference> models) {
         try {
             log.debugf("ReferenceTransformer.toEntityList entities.size: %s", models.size());
-            var pair = Pair.of("outsource", (Function<Outsource, ?>) outsourceTransformer::toEntity);
-            return toEntityList( models, pair);
+            var pairOutsource = Pair.of("outsource", (Function<Outsource, ?>) outsourceTransformer::toEntity);
+            var pairStructure = Pair.of("structure", (Function<Structure, ?>) structureTransformer::toEntity);
+            return toEntityList( models, pairOutsource, pairStructure);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.TRANSFORMER_OBJECT_ERROR, e);
@@ -52,8 +59,9 @@ public class ReferenceTransformer extends GenericTransformer<ReferenceEntity, Re
     public Reference toModel(ReferenceEntity entity) {
         try {
             log.debugf("ReferenceTransformer.toModel entity: %s", entity);
-            var pair = Pair.of("outsource", (Function<OutsourceEntity, ?>) outsourceTransformer::toModel);
-            return transformToModel(entity, pair);
+            var pairOutsource = Pair.of("outsource", (Function<OutsourceEntity, ?>) outsourceTransformer::toModel);
+            var pairStructure = Pair.of("structure", (Function<StructureEntity, ?>) structureTransformer::toModel);
+            return transformToModel(entity, pairOutsource, pairStructure);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.TRANSFORMER_OBJECT_ERROR, e);
@@ -64,8 +72,9 @@ public class ReferenceTransformer extends GenericTransformer<ReferenceEntity, Re
     public List<Reference> toModelList(List<ReferenceEntity> entities) {
         try {
             log.debugf("ReferenceTransformer.toModelList entities.size: %s", entities.size());
-            var pair = Pair.of("outsource", (Function<OutsourceEntity, ?>) outsourceTransformer::toModel);
-            return toModelList(entities, pair);
+            var pairOutsource = Pair.of("outsource", (Function<OutsourceEntity, ?>) outsourceTransformer::toModel);
+            var pairStructure = Pair.of("structure", (Function<StructureEntity, ?>) structureTransformer::toModel);
+            return toModelList(entities, pairOutsource, pairStructure);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.TRANSFORMER_OBJECT_ERROR, e);
